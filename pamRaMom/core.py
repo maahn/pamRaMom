@@ -63,6 +63,7 @@ def calc_radarMoments(spectrum,
     peak_min_bins=2, 
     smooth_spectrum= True,
     use_wider_peak=False,
+    receiver_miscalibration=0,
     ):
   
   """
@@ -97,7 +98,8 @@ def calc_radarMoments(spectrum,
     smooth spectrum before estiamting moments (default  True)
   use_wider_peak: bool, optional
     include edges into peak (default False)
-
+  receiver_miscalibration, float, optional
+    simulate a wrong radar receiver calibration [dB] (default 0)
   Returns
   -------
 
@@ -128,6 +130,13 @@ def calc_radarMoments(spectrum,
 
 
   pamRaMomLib.report_module.verbose = verbose
+
+
+  #apply a receiver miscalibration:
+  if receiver_miscalibration != 0:
+    spectrum = spectrum * 10**(0.1*receiver_miscalibration)
+    noise_max = noise_max * 10**(0.1*receiver_miscalibration)
+    noise_mean = noise_mean * 10**(0.1*receiver_miscalibration)
 
 
   output = pamRaMomLib.calc_moments(
