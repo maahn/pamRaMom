@@ -21,8 +21,8 @@ def calc_hildebrandSekhon(spectrum, no_ave = 1,verbose=0):
   Parameters
   ----------
 
-  spectrum : array
-      linear radar spectrum
+  spectrum : array_like
+      linear radar spectrum. Can be 1D or 2D.
   no_ave : int, optional
       number of averages (default 1)
   verbose : int, optional
@@ -31,14 +31,20 @@ def calc_hildebrandSekhon(spectrum, no_ave = 1,verbose=0):
   Returns
   -------
 
-  meanNoise : float
+  meanNoise : array_like or float
     mean noise level in linear units
-  maxNoise : float
+  maxNoise : array_like or float
     maximum noise level in linear units
  
   """
 
   spectrum = np.asarray(spectrum)
+  specShape = np.shape(spectrum)
+
+  assert len(specShape) <=2,  'spectrum must not have more than two dimensions (height, nfft)'
+
+  if len(specShape) == 1:
+    spectrum = spectrum.reshape((1,specShape[0]))
 
   pamRaMomLib.report_module.verbose = verbose
 
@@ -47,7 +53,7 @@ def calc_hildebrandSekhon(spectrum, no_ave = 1,verbose=0):
   if error>0:
     raise RuntimeError('Error in Fortran routine hildebrand_sekhon')
 
-  return meanNoise, maxNoise
+  return np.squeeze(meanNoise), np.squeeze(maxNoise)
 
 
 def calc_radarMoments(spectrum,
@@ -72,8 +78,8 @@ def calc_radarMoments(spectrum,
   Parameters
   ----------
 
-  spectrum : array
-      linear radar spectrum [mm⁶/m³]
+  spectrum : array_like
+      linear radar spectrum [mm⁶/m³]. Can be 1D or 2D.
   verbose : int, optional
       verbosity level (default 0)
   max_v : float, optional
@@ -86,9 +92,9 @@ def calc_radarMoments(spectrum,
     No of peaks which should be determined (default  3)
   noise_distance_factor : float, optional
     factor between noise and noise max. If 0, noiase max is obtained using calc_hildebrandSekhon (default  0)
-  noise_mean : float, optional
+  noise_mean : array_like or float, optional
     linear mean noise per spectral bin in mm: mm6/m3. If None, it is determined using calc_hildebrandSekhon (default  None)
-  noise_max : float, optional
+  noise_max : array_like or float, optional
     linear maximum noise per spectral bin in mm: mm6/m3. If None, it is determined using calc_hildebrandSekhon (default  None)
   peak_min_snr: float, optional
     minimum linear SNR for each peak (default 1.2)
@@ -103,15 +109,15 @@ def calc_radarMoments(spectrum,
   Returns
   -------
 
-  spectrum_out : array
+  spectrum_out : array_like
     radar spectrum with noise removed [mm⁶/m³]
-  moments : array
+  moments : array_like
     0th - 4th moment [mm⁶/m³, m/s, m/s,-,-]
-  slope : array
+  slope : array_like
     slope of the peak [dB/(m/s)]
-  edge : array
+  edge : array_like
     left(0) and right(1) edge the peak [m/s]
-  quality : array
+  quality : array_like
     quality flag: 1st byte: aliasing; 2nd byte: more peaks present; 7th: no peak found; 8th: principal peak isolated
   noise_mean : float
     mean noise level in linear units
@@ -119,6 +125,9 @@ def calc_radarMoments(spectrum,
  """
 
   spectrum = np.asarray(spectrum)
+  specShape = np.shape(spectrum)
+
+  assert len(specShape) <=2, 'spectrum must not have more than two dimensions (height, nfft)'
 
   if (noise_mean is None):
     noise_mean, noise_maxHilde = calc_hildebrandSekhon(spectrum, no_ave = no_ave,verbose=verbose)
@@ -129,8 +138,10 @@ def calc_radarMoments(spectrum,
       noise_max = noise_maxHilde
 
 
-  pamRaMomLib.report_module.verbose = verbose
+  noise_mean = np.asarray(noise_mean)
+  noise_max = np.asarray(noise_max)
 
+  pamRaMomLib.report_module.verbose = verbose
 
   #apply a receiver miscalibration:
   if receiver_miscalibration != 0:
@@ -138,8 +149,16 @@ def calc_radarMoments(spectrum,
     noise_max = noise_max * 10**(0.1*receiver_miscalibration)
     noise_mean = noise_mean * 10**(0.1*receiver_miscalibration)
 
+  if len(specShape) == 1:
+    spectrum = spectrum.reshape((1,specShape[0]))
+    noise_mean = noise_mean.reshape(1)
+    noise_max = noise_max.reshape(1)
 
-  output = pamRaMomLib.calc_moments(
+  assert (len(spectrum.shape) -1) == len(noise_mean.shape), 'shape of spectrum and noise_mean does not match'
+  assert (len(spectrum.shape) -1) == len(noise_max.shape), 'shape of spectrum and noise_max does not match'
+
+
+  output = pamRaMomLib.calc_moments.calc_moments_column(
     npeaks,
     spectrum,
     noise_mean,
@@ -158,5 +177,5 @@ def calc_radarMoments(spectrum,
 
 
 
-  return spectrum_out,moments,slope,edge,quality,noise_mean
+  return np.squeeze(spectrum_out),np.squeeze(moments),np.squeeze(slope),np.squeeze(edge),np.squeeze(quality),np.squeeze(noise_mean)
 

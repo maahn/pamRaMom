@@ -24,6 +24,7 @@ subroutine hildebrand_sekhon(&
   errorstatus,&
   spectrum,&
   n_ave,&
+  n_heights,&
   n_ffts,&
   noise_mean,&
   noise_max)
@@ -45,14 +46,14 @@ subroutine hildebrand_sekhon(&
   implicit none
 
 
-  integer, intent(in) :: n_ave, n_ffts
-  real(kind=dbl), dimension(n_ffts), intent(in) :: spectrum
-  real(kind=dbl), intent(out) :: noise_mean
-  real(kind=dbl), intent(out) :: noise_max
+  integer, intent(in) :: n_ave, n_ffts, n_heights
+  real(kind=dbl), dimension(n_heights,n_ffts), intent(in) :: spectrum
+  real(kind=dbl), dimension(n_heights), intent(out) :: noise_mean
+  real(kind=dbl), dimension(n_heights), intent(out) :: noise_max
 
   real(kind=dbl), dimension(n_ffts) :: dummy, a1, a3,spectrum_sorted
   real(kind=dbl) :: sumLi, sumSq, sumNs, maxNs
-  integer :: n, i, numNs
+  integer :: n, i, numNs, h
 
   integer(kind=long), intent(out) :: errorstatus
   integer(kind=long) :: err = 0
@@ -71,47 +72,49 @@ subroutine hildebrand_sekhon(&
 
   if (verbose >= 2) call report(info,'Start of ', nameOfRoutine)
   
-  spectrum_sorted = spectrum
-  dummy=0.d0
-  call dsort(err,spectrum_sorted, dummy, n_ffts, 1)
-  if (err /= 0) then
-      msg = 'error in dsort!'
-      call report(err, msg, nameOfRoutine)
-      errorstatus = err
-      stop !return
-  end if 
-  sumLi = 0.d0
-  sumSq = 0.d0
-  sumNs = 0.d0
-  n     = 0  
-  a1 = 0.d0
-  a3 = 0.d0
-  maxNs = 0.d0
-  numNs   = 0
 
-  do i= 1, n_ffts
-    sumLi = sumLi + spectrum_sorted(i)
-    sumSq = sumSq + spectrum_sorted(i)**2
-    n = n+1
-    a3(i) = sumLi*sumLi
-    a1(i) = DBLE(n_ave)*(n*sumSq-a3(i))
-    if (a1(i) <= a3(i)) then
-      sumNs = sumLi
-      numNs = n
-      maxNs = spectrum_sorted(i)
-    else
-      !partial spectrum no longer has characteristics of white noise
-      EXIT
-    end if
+  do h= 1, n_heights
+    spectrum_sorted = spectrum(h,:)
+    dummy=0.d0
+    call dsort(err,spectrum_sorted, dummy, n_ffts, 1)
+    if (err /= 0) then
+        msg = 'error in dsort!'
+        call report(err, msg, nameOfRoutine)
+        errorstatus = err
+        stop !return
+    end if 
+    sumLi = 0.d0
+    sumSq = 0.d0
+    sumNs = 0.d0
+    n     = 0  
+    a1 = 0.d0
+    a3 = 0.d0
+    maxNs = 0.d0
+    numNs   = 0
 
+    do i= 1, n_ffts
+      sumLi = sumLi + spectrum_sorted(i)
+      sumSq = sumSq + spectrum_sorted(i)**2
+      n = n+1
+      a3(i) = sumLi*sumLi
+      a1(i) = DBLE(n_ave)*(n*sumSq-a3(i))
+      if (a1(i) <= a3(i)) then
+        sumNs = sumLi
+        numNs = n
+        maxNs = spectrum_sorted(i)
+      else
+        !partial spectrum no longer has characteristics of white noise
+        EXIT
+      end if
+
+    end do
+
+    noise_mean(h)   = sumNs/numNs
+    noise_max(h)    = maxNs
+  !   N_points = numNs
+
+    if (verbose >= 5) print*, "hildebrand found",  h, noise_mean(h), noise_max(h)
   end do
-
-  noise_mean   = sumNs/numNs
-  noise_max    = maxNs
-!   N_points = numNs
-
-  if (verbose >= 5) print*, "hildebrand found",  noise_mean, noise_max
-
 
   errorstatus = err
   if (verbose >= 2) call report(info,'End of ', nameOfRoutine)
