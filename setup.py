@@ -12,15 +12,15 @@ def read(fname):
 
 def configuration(parent_package='',top_path=None):
     
-    config = Configuration('pamRaMom', parent_package, top_path,
+    config = Configuration('pamtraRadarMoments', parent_package, top_path,
         version = '0.1',
         author  = "Maximilin Maahn",
         author_email = "maximilian.maahn@colorado.edu",
         description = "Estimate Moments from a radar Doppler spectrum",
         license = "GPL v3",
         python_requires='>=3.5',
-        url = 'https://github.com/maahn/pamRaMom',
-        download_url = 'https://github.com/maahn/pamRaMom/releases/download/0.1/pamRaMom-0.1.zip',
+        url = 'https://github.com/maahn/pamtraRadarMoments',
+        download_url = 'https://github.com/maahn/pamtraRadarMoments/releases/download/0.1/pamtraRadarMoments-0.1.zip',
         long_description = read('README.rst'),
         classifiers = [
             "Development Status :: 3 - Alpha",
@@ -36,17 +36,17 @@ def configuration(parent_package='',top_path=None):
     kw = {}
     if sys.platform == 'darwin':
         kw['extra_link_args'] = ['-undefined dynamic_lookup', '-bundle']
-    config.add_extension('pamRaMomLib',
+    config.add_extension('pamtraRadarMomentsLib',
         sources=[
-                 'pamRaMom/pamRaMomLib/pamRaMomLib.pyf',
-                 'pamRaMom/pamRaMomLib/kinds.f90',
-                 'pamRaMom/pamRaMomLib/report_module.f90',
-                 'pamRaMom/pamRaMomLib/constants.f90',
-                 'pamRaMom/pamRaMomLib/convolution.f90',
-                 'pamRaMom/pamRaMomLib/dsort.f90',
-                 'pamRaMom/pamRaMomLib/hildebrand_sekhon.f90',
-                 'pamRaMom/pamRaMomLib/smooth_savitzky_golay.f90',
-                 'pamRaMom/pamRaMomLib/calc_moments.f90',
+                 'pamtraRadarMoments/pamtraRadarMomentsLib/pamtraRadarMomentsLib.pyf',
+                 'pamtraRadarMoments/pamtraRadarMomentsLib/kinds.f90',
+                 'pamtraRadarMoments/pamtraRadarMomentsLib/report_module.f90',
+                 'pamtraRadarMoments/pamtraRadarMomentsLib/constants.f90',
+                 'pamtraRadarMoments/pamtraRadarMomentsLib/convolution.f90',
+                 'pamtraRadarMoments/pamtraRadarMomentsLib/dsort.f90',
+                 'pamtraRadarMoments/pamtraRadarMomentsLib/hildebrand_sekhon.f90',
+                 'pamtraRadarMoments/pamtraRadarMomentsLib/smooth_savitzky_golay.f90',
+                 'pamtraRadarMoments/pamtraRadarMomentsLib/calc_moments.f90',
                  ],
         library_dirs = ['../dfftpack/'],
         libraries = ['dfftpack','lapack'],
@@ -59,9 +59,9 @@ if __name__ == "__main__":
 
     
     setup(configuration=configuration,
-        packages = ['pamRaMom','pamRaMom.pamRaMomLib'],        
+        packages = ['pamtraRadarMoments','pamtraRadarMoments.pamtraRadarMomentsLib'],        
         # package_data = {
-        #     'pamRaMom': ['file'],
+        #     'pamtraRadarMoments': ['file'],
         # },
         platforms = ['any'],
         requires = ['numpy', 'scipy'])

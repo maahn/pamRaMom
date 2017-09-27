@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -
 # (c) M. Maahn, 2017
 
-from . import pamRaMomLib
+from . import pamtraRadarMomentsLib
 from . import decorators
 
 import numpy as np
@@ -43,9 +43,9 @@ def calc_hildebrandSekhon(spectrum, no_ave = 1,verbose=0):
   if len(specShape) == 1:
     spectrum = spectrum.reshape((1,specShape[0]))
 
-  pamRaMomLib.report_module.verbose = verbose
+  pamtraRadarMomentsLib.report_module.verbose = verbose
 
-  error, meanNoise, maxNoise = pamRaMomLib.hildebrand_sekhon(spectrum,no_ave)
+  error, meanNoise, maxNoise = pamtraRadarMomentsLib.hildebrand_sekhon(spectrum,no_ave)
   
   if error>0:
     raise RuntimeError('Error in Fortran routine hildebrand_sekhon')
@@ -141,7 +141,7 @@ def calc_radarMoments(spectrum,
   noise_mean = np.asarray(noise_mean)
   noise_max = np.asarray(noise_max)
 
-  pamRaMomLib.report_module.verbose = verbose
+  pamtraRadarMomentsLib.report_module.verbose = verbose
 
   #apply a receiver miscalibration:
   if receiver_miscalibration != 0:
@@ -158,7 +158,7 @@ def calc_radarMoments(spectrum,
   assert (len(spectrum.shape) -1) == len(noise_max.shape), 'shape of spectrum and noise_max does not match'
 
 
-  output = pamRaMomLib.calc_moments.calc_moments_column(
+  output = pamtraRadarMomentsLib.calc_moments.calc_moments_column(
     npeaks,
     spectrum,
     noise_mean,

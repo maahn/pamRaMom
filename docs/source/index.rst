@@ -1,12 +1,12 @@
 
 ====================================
-Welcome to pamRaMom's documentation!
+Welcome to pamtraRadarMoments's documentation!
 ====================================
 
 :Release: |version|
 :Date: |today|
 
-pamRaMom is the Pamtra Radar Moment Estimator. It estimates the moments (reflectivity, mean Doppler velocity, Spectrum width, SKewness, Kurtosis), slopes and edges of the most significant peaks of the radar Doppler spectrum. It's written in Python with a core in Fortran.
+pamtraRadarMoments is the Pamtra Radar Moment Estimator. It estimates the moments (reflectivity, mean Doppler velocity, Spectrum width, SKewness, Kurtosis), slopes and edges of the most significant peaks of the radar Doppler spectrum. It's written in Python with a core in Fortran.
 
 Note that pamRaMo supports Python >3.5.
 
@@ -51,12 +51,12 @@ Get model from git repository
 *****************************
 The version control system git (http://git-scm.com/) is used to keep track of the code. Get a copy of the model with::
 
-    git clone https://github.com/maahn/pamRaMom
+    git clone https://github.com/maahn/pamtraRadarMoments
 
 The very basics of git can be found here https://try.github.io/levels/1/challenges/1
 
 
-Build pamRaMom
+Build pamtraRadarMoments
 **************
 Simply type ::
 
@@ -73,7 +73,7 @@ if you do not have root permissions you can also use instead of the last line::
 
 You can start using pamRaMo in python with ::
 
-  import pamRaMom
+  import pamtraRadarMoments
 
 See examples for more information.
 
@@ -81,7 +81,7 @@ See examples for more information.
 
 Provides Routines
 *****************
-.. automodule:: pamRaMom.core
+.. automodule:: pamtraRadarMoments.core
     :members: 
     :undoc-members:
     :inherited-members:
