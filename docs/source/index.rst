@@ -6,9 +6,9 @@ Welcome to pamRaMom's documentation!
 :Release: |version|
 :Date: |today|
 
-pamRaMom is the Pamtra Radar Moment Estimator. It estimates the moments (reflectivity, mean Doppler velocity, Spectrum width, SKewness, Kurtosis), slopes and edges of the most significant peaks of teh radar Doppler spectrum. It's written in Python with a core in Fortran.
+pamRaMom is the Pamtra Radar Moment Estimator. It estimates the moments (reflectivity, mean Doppler velocity, Spectrum width, SKewness, Kurtosis), slopes and edges of the most significant peaks of the radar Doppler spectrum. It's written in Python with a core in Fortran.
 
-
+Note that pamRaMo supports Python >3.5.
 
 Installation
 ============
@@ -24,11 +24,11 @@ The model is tested with gcc version 7.1.0.
 
 To get the Python version, the following packages are additionally required::
 
-    sudo apt-get install python-pandas python-numpy python-matplotlib python-scipy python-netcdf python-pip
+    sudo apt-get install python3-pandas python3-numpy python3-matplotlib python3-scipy python3-netcdf python3-pip
 
 The xarray and numba python packages (for exapmples only) might not be in the repositories, install with::
 
-    sudo pip install numba xarray
+    sudo pip3 install numba xarray
 
 
 Dependencies on Mac OS X
@@ -41,7 +41,7 @@ On Mac OS X, it is recommended to use brew (http://brew.sh) to install gfortran 
 
 For the Python version, it is recommended not to use OS X's default python version,
 but to install an independent one, e.g. with brew or conda
-(https://www.continuum.io/downloads). Note that pamRaMo does not support Python3 yet.
+(https://www.continuum.io/downloads). 
 In addition, the following packages are required::
 
     pip install numpy scipy matplotlib xarray numba

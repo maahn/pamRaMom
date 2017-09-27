@@ -1,11 +1,8 @@
 # -*- coding: utf-8 -
 # (c) M. Maahn, 2017
 
-
-
-from __future__ import division, absolute_import, print_function
-
 from . import pamRaMomLib
+from . import decorators
 
 import numpy as np
 
@@ -53,9 +50,11 @@ def calc_hildebrandSekhon(spectrum, no_ave = 1,verbose=0):
   if error>0:
     raise RuntimeError('Error in Fortran routine hildebrand_sekhon')
 
-  return np.squeeze(meanNoise), np.squeeze(maxNoise)
+  return meanNoise, maxNoise
 
 
+
+@decorators.NDto2DtoND(referenceIn=0,convertInputs=[0],convertOutputs=[0,1,2,3,4])
 def calc_radarMoments(spectrum,
     verbose = 0, 
     max_v = 7.885, 
@@ -65,7 +64,7 @@ def calc_radarMoments(spectrum,
     noise_distance_factor = 0, 
     noise_mean = None, #linear noise per spectral bin in mm6/m3
     noise_max = None, #linear noise per spectral bin in mm6/m3
-    peak_min_snr=1.2, 
+    peak_min_snr=-10, 
     peak_min_bins=2, 
     smooth_spectrum= True,
     use_wider_peak=False,
@@ -127,6 +126,7 @@ def calc_radarMoments(spectrum,
   spectrum = np.asarray(spectrum)
   specShape = np.shape(spectrum)
 
+
   assert len(specShape) <=2, 'spectrum must not have more than two dimensions (height, nfft)'
 
   if (noise_mean is None):
@@ -173,9 +173,7 @@ def calc_radarMoments(spectrum,
 
   error,spectrum_out,moments,slope,edge,quality = output
   if error>0:
-    raise RuntimeError('Error in Fortran routine hildebrand_sekhon')
+    raise RuntimeError('Error in Fortran routine calc_moments_column')
 
-
-
-  return np.squeeze(spectrum_out),np.squeeze(moments),np.squeeze(slope),np.squeeze(edge),np.squeeze(quality),np.squeeze(noise_mean)
+  return spectrum_out,moments,slope,edge,quality,noise_mean
 

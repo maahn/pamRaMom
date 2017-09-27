@@ -18,7 +18,7 @@ def configuration(parent_package='',top_path=None):
         author_email = "maximilian.maahn@colorado.edu",
         description = "Estimate Moments from a radar Doppler spectrum",
         license = "GPL v3",
-        python_requires='>=2.7, <3',
+        python_requires='>=3.5',
         url = 'https://github.com/maahn/pamRaMom',
         download_url = 'https://github.com/maahn/pamRaMom/releases/download/0.1/pamRaMom-0.1.zip',
         long_description = read('README.rst'),
